@@ -3,10 +3,11 @@ import sqlite3
 import requests
 import pandas as pd
 import numpy as np
+import time
 
 from config import alpha_key
 
-requests.session()
+session = requests.session()
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
 
@@ -27,16 +28,20 @@ def list_of_sp_companies():
 def load_stock_data():
     sp_list = list_of_sp_companies()
     for company in sp_list:
+        time.sleep(1.5)
         print('Loading company: {}'.format(company))
         r = requests.get('https://www.alphavantage.co/query?outputsize=full&function=TIME_SERIES_DAILY&symbol=%s&interval=1min&apikey=%s' % (company, alpha_key['a_key']))
         r = r.json()
-        for i in r['Time Series (Daily)']:
+        if r['Time Series (Daily)'] is None:
+            continue
+        result = r['Time Series (Daily)']
+        for i in result:
             dt = i
-            opn = r['Time Series (Daily)'][i]['1. open']
-            high = r['Time Series (Daily)'][i]['2. high']
-            low = r['Time Series (Daily)'][i]['3. low']
-            close = r['Time Series (Daily)'][i]['4. close']
-            volume = r['Time Series (Daily)'][i]['5. volume']
+            opn = result[i]['1. open']
+            high = result[i]['2. high']
+            low = result[i]['3. low']
+            close = result[i]['4. close']
+            volume = result[i]['5. volume']
             # Insert a row of data
             c.execute("INSERT INTO stocks VALUES (?,?,?,?,?,?,?)", (company,dt,opn,high,low,close,volume))
         conn.commit()
@@ -46,7 +51,5 @@ def load_stock_data():
 # create_stocks_table()
 # load_stock_data()
 # conn.close()
-
-
 
 
