@@ -1,21 +1,9 @@
 
-import sqlite3
 import requests
 import pandas as pd
-import numpy as np
 import time
 
 from config import alpha_key
-
-session = requests.session()
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-
-def create_stocks_table():
-    c.executescript('''DROP TABLE IF EXISTS stocks;''')
-    c.execute('''CREATE TABLE stocks (stock, price_date, open, high, low, close, volume)''')
-    conn.commit()
-    print('Done creating stocks table.')
 
 def list_of_sp_companies():
     sp_list = []
@@ -25,7 +13,7 @@ def list_of_sp_companies():
         sp_list.append(stock)
     return sp_list
 
-def load_stock_data():
+def load_stock_data(c, conn):
     sp_list = list_of_sp_companies()
     for company in sp_list:
         time.sleep(1.5)
@@ -46,10 +34,3 @@ def load_stock_data():
             c.execute("INSERT INTO stocks VALUES (?,?,?,?,?,?,?)", (company,dt,opn,high,low,close,volume))
         conn.commit()
         print('Done loading {}'.format(company))
-
-# Tests
-# create_stocks_table()
-# load_stock_data()
-# conn.close()
-
-

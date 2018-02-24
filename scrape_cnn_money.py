@@ -1,20 +1,8 @@
 
-import sqlite3
 import datetime
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-
-url = 'http://money.cnn.com/data/markets/sandp/?page={}'
-
-conn = sqlite3.connect('data.db')
-c = conn.cursor()
-
-def create_sp_table():
-    c.executescript('''DROP TABLE IF EXISTS sp;''')
-    c.execute('''CREATE TABLE sp (stock, company, price, change, scrape_date)''')
-    conn.commit()
-    print('Done creating sp table.')
 
 def change_func(neg_change, pos_change):
     if neg_change == None:
@@ -23,8 +11,9 @@ def change_func(neg_change, pos_change):
         change = neg_change
     return change.get_text()
 
-def scrape_cnn_money():
+def scrape_cnn_money(conn):
     data = {}
+    url = 'http://money.cnn.com/data/markets/sandp/?page={}'
     # Probably a better way to handle this part...
     for i in range(0, 35):
         r = requests.get(url.format(i))
@@ -45,16 +34,5 @@ def scrape_cnn_money():
                     data[symbol] = pd.Series([symbol, co, price, change, dt], index=['Stock', 'Company','Price','Change','DatePulled'])
     df = pd.DataFrame(data).T
     df.to_sql('sp', conn, if_exists='replace')
+    print('Done!')
     return df
-
-def export_to_excel(data, file_name):
-    writer = pd.ExcelWriter("%s.xlsx" % (file_name,))
-    data.to_excel(writer,"%s" % (file_name,))
-    writer.save()
-    print('Done')
-
-# Tests
-# create_sp_table()
-# df = scrape_cnn_money()
-# export_to_excel(df, 'SP')
-
