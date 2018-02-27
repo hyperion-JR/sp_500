@@ -4,6 +4,7 @@ import datetime
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
+from IPython.display import Markdown, display
 from scipy import stats
 
 scaler = StandardScaler()
@@ -44,20 +45,30 @@ def get_correlations():
     sp_dict, del_sp_dict = sp_pop()
     correlations = {}
     list_of_companies = []
+    dataframes = []
     for i, company in enumerate(sp_dict):
         list_of_companies.append(company)
     for i, k in enumerate(list_of_companies):
         if i < len(list_of_companies)-1:
-            x = scaler.fit_transform(np.array(sp_dict[list_of_companies[i+1]][:500]).reshape(-1,1))
-            y = scaler.fit_transform(np.array(sp_dict[list_of_companies[i]][:500]).reshape(-1,1))
-            pcc, p_value = stats.pearsonr(x, y)
-            if list_of_companies[i] not in correlations:
-                correlations[list_of_companies[i]] = pd.Series([list_of_companies[i+1], pcc[0], p_value[0]], index=['Company X', 'PCC', 'P-Value'])
+            df = run_correlations(list_of_companies[i], sp_dict, list_of_companies)
+            dataframes.append(df)
         else:
             continue
-    return pd.DataFrame(correlations).T
+    return pd.concat(dataframes)
 
-print(get_correlations())
+def run_correlations(y_company, sp_dict, list_of_companies):
+    data = {}
+    for i in list_of_companies:
+        if i != y_company:
+            x = scaler.fit_transform(np.array(sp_dict[i][:500]).reshape(-1,1))
+            y = scaler.fit_transform(np.array(sp_dict[y_company][:500]).reshape(-1,1))
+            pcc, p_value = stats.pearsonr(x, y)
+            if i not in data:
+                data[i] = pd.Series([y_company, i, pcc[0], p_value[0]], index=['Company Y','Company X', 'PCC', 'P-Value'])
+    return pd.DataFrame(data).T
 
+df = get_correlations()
+sorted_df = df.sort_values(by=['Company Y','Company X', 'PCC', 'P-Value'], ascending=[0, 0 , 1, 0])
+print(sorted_df)
 
     
