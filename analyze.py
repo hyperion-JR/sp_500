@@ -4,7 +4,6 @@ import datetime
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
-from IPython.display import Markdown, display
 from scipy import stats
 
 scaler = StandardScaler()
@@ -68,7 +67,7 @@ def run_correlations(y_company, sp_dict, list_of_companies):
     return pd.DataFrame(data).T
 
 df = get_correlations()
-sorted_df = df.sort_values(by=['Company Y','Company X', 'PCC', 'P-Value'], ascending=[0, 0 , 1, 0])
+sorted_df = df.sort_values(by=['PCC', 'P-Value'])
 print(sorted_df)
 
     
