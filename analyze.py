@@ -24,7 +24,7 @@ def create_sp_arrays():
         volume = int(row[6])
         if stock not in data:
             data[stock] = []
-        data[stock].append(change)
+        data[stock].append(opn)
     return data
 
 def sp_pop():
@@ -39,9 +39,20 @@ def sp_pop():
             del_sp_dict[i] = k
     return new_sp_dict, del_sp_dict
 
+def calculate_daily_changes():
+    data = {}
+    sp_dict, del_sp_dict = sp_pop()
+    for k, v in sp_dict.items():
+        for i in v:
+            daily_change = ((i+1)-i) / i
+            if k not in data:
+                data[k] = []
+            data[k].append(daily_change)
+    return data
+
 def get_correlations():
     # Returns pearson correlation coefficient and p-value as it iterates through pairs of stocks
-    sp_dict, del_sp_dict = sp_pop()
+    sp_dict = calculate_daily_changes()
     correlations = {}
     list_of_companies = []
     dataframes = []
