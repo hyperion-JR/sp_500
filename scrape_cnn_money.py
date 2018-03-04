@@ -48,7 +48,7 @@ def company_names(c, conn):
         if stock_name not in data:
             data[stock_name] = pd.Series([co_name], index=['Name'])
     df = pd.DataFrame(data).T
-    df.to_sql('sp', conn, if_exists='replace')
+    df.to_sql('companies', conn, if_exists='replace')
     conn.commit()
     print('Done loading companies data!')
     return df
