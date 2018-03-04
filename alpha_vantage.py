@@ -5,16 +5,16 @@ import time
 
 from config import alpha_key
 
-def list_of_sp_companies():
+def list_of_sp_companies(c):
     sp_list = []
-    cursor = c.execute('''SELECT DISTINCT stock FROM sp''')
+    cursor = c.execute('''SELECT DISTINCT * FROM sp''')
     for i in cursor:
         stock = i[0]
         sp_list.append(stock)
     return sp_list
 
 def load_stock_data(c, conn):
-    sp_list = list_of_sp_companies()
+    sp_list = list_of_sp_companies(c)
     for company in sp_list:
         time.sleep(1.5)
         print('Loading company: {}'.format(company))
@@ -32,5 +32,5 @@ def load_stock_data(c, conn):
             volume = result[i]['5. volume']
             # Insert a row of data
             c.execute("INSERT INTO stocks VALUES (?,?,?,?,?,?,?)", (company,dt,opn,high,low,close,volume))
-        conn.commit()
-        print('Done loading {}'.format(company))
+    conn.commit()
+    print('Done loading {}'.format(company))

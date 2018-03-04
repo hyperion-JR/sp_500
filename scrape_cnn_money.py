@@ -34,5 +34,21 @@ def scrape_cnn_money(conn):
                     data[symbol] = pd.Series([symbol, co, price, change, dt], index=['Stock', 'Company','Price','Change','DatePulled'])
     df = pd.DataFrame(data).T
     df.to_sql('sp', conn, if_exists='replace')
-    print('Done!')
+    conn.commit()
+    print('Done loading data from CNN Money!')
+    return df
+
+def company_names(c, conn):
+    data = {}
+    cursor = c.execute('''SELECT DISTINCT * FROM sp''')
+    for i in cursor:
+        stock_name = i[0]
+        co = i[2].replace(u'\xa0', u' ')
+        co_name = co.split(' ', 1)[1]
+        if stock_name not in data:
+            data[stock_name] = pd.Series([co_name], index=['Name'])
+    df = pd.DataFrame(data).T
+    df.to_sql('sp', conn, if_exists='replace')
+    conn.commit()
+    print('Done loading companies data!')
     return df

@@ -2,7 +2,7 @@
 import sqlite3
 import pandas as pd
 
-from scrape_cnn_money import scrape_cnn_money
+from scrape_cnn_money import scrape_cnn_money, company_names
 from alpha_vantage import load_stock_data
 
 conn = sqlite3.connect('data.db')
@@ -13,6 +13,12 @@ def create_sp_table():
     c.execute('''CREATE TABLE sp (stock, company, price, change, scrape_date)''')
     conn.commit()
     print('Done creating sp table.')
+
+def create_companies_table():
+    c.executescript('''DROP TABLE IF EXISTS companies;''')
+    c.execute('''CREATE TABLE companies (stock, name)''')
+    conn.commit()
+    print('Done creating companies table.')
 
 def create_stocks_table():
     c.executescript('''DROP TABLE IF EXISTS stocks;''')
@@ -29,8 +35,8 @@ def export_to_excel(data, file_name):
 if __name__ == '__main__':
     create_sp_table()
     scrape_cnn_money(conn)
+    create_companies_table()
+    company_names(c, conn)
     create_stocks_table()
     load_stock_data(c, conn)
     conn.close()
-
-
