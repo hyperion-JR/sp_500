@@ -1,6 +1,7 @@
 
 import sqlite3
 import datetime
+import pytablewriter
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
@@ -10,8 +11,20 @@ scaler = StandardScaler()
 conn = sqlite3.connect('data.db')
 c = conn.cursor()
 
+def company_names():
+    companies = {}
+    cursor = c.execute('''SELECT * FROM companies''')
+    for row in cursor:
+        stock = row[0]
+        name = row[1]
+        if stock not in companies:
+            companies[stock] = pd.Series([stock, name], index=['Stock','Name'])
+    return pd.DataFrame(companies).T
+
 def create_sp_arrays():
+    df = {}
     data = {}
+    companies = company_names()
     cursor = c.execute('''SELECT * FROM stocks''')
     for row in cursor:
         stock = row[0]
@@ -22,14 +35,18 @@ def create_sp_arrays():
         close = float(row[5])
         change = close - opn
         volume = int(row[6])
+        shares = volume / opn
         if stock not in data:
             data[stock] = []
+        if price_date not in df:
+            df[price_date] = pd.Series([stock, opn, close, high, low, volume, shares], index=['Stock','Open','Close','High','Low','Volume','Shares'])
         data[stock].append(opn)
-    return data
+    df = pd.merge(pd.DataFrame(df).T, companies, on='Stock')
+    return data, df
 
 def sp_pop():
     # Deletes companies from dict that have less than 500 observations
-    sp_dict = create_sp_arrays()
+    sp_dict, df = create_sp_arrays()
     new_sp_dict = {}
     del_sp_dict = {}
     for i, k in sp_dict.items():
@@ -77,8 +94,14 @@ def run_correlations(y_company, sp_dict, list_of_companies):
                 data[i] = pd.Series([y_company, i, pcc[0], p_value[0]], index=['Company Y','Company X', 'PCC', 'P-Value'])
     return pd.DataFrame(data).T
 
+def export_to_excel(data, file_name):
+    writer = pd.ExcelWriter("%s.xlsx" % (file_name,))
+    data.to_excel(writer,"%s" % (file_name,))
+    writer.save()
+    print('Done')
+
 df = get_correlations()
 sorted_df = df.sort_values(by=['PCC', 'P-Value'])
-print(sorted_df)
-
-    
+writer = pytablewriter.MarkdownTableWriter()
+writer.from_dataframe(sorted_df)
+writer.write_table()
