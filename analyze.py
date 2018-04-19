@@ -67,6 +67,9 @@ def calculate_daily_changes():
             data[k].append(daily_change)
     return data
 
+sp_dict = calculate_daily_changes()
+print(sp_dict)
+
 def get_correlations():
     # Returns pearson correlation coefficient and p-value as it iterates through pairs of stocks
     sp_dict = calculate_daily_changes()
