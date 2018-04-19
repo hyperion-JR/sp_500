@@ -4,6 +4,7 @@ config.py
 data.db
 SP.xlsx
 companylist.csv
+Downloaded_Filings
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

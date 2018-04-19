@@ -12,7 +12,7 @@ def get_list(ticker):
     for page_number in range(0,2000,100):
         base_url = base_url_part1 + ticker + base_url_part2 + str(page_number) + base_url_part3
         sec_page = urllib.request.urlopen(base_url)
-        sec_soup = BeautifulSoup(sec_page)
+        sec_soup = BeautifulSoup(sec_page, "lxml")
         filings = sec_soup.findAll('filing')
         for filing in filings:
             report_year = int(filing.datefiled.get_text()[0:4])
@@ -27,7 +27,7 @@ def download_report(url_list,dir_path):
     target_file_type = u'EX-101.INS'
     for report_url in url_list:
         report_page = urllib.request.urlopen(report_url)
-        report_soup = BeautifulSoup(report_page)
+        report_soup = BeautifulSoup(report_page, "lxml")
         xbrl_file = report_soup.findAll('tr')
         for item in xbrl_file:
             try:
@@ -46,14 +46,16 @@ def download_report(url_list,dir_path):
             except:
                 pass
 
-# Step 2: Define funtions to download filings
-# Import tickers
-TickerFile = pd.read_csv("companylist.csv")
-Tickers = TickerFile['Symbol'].tolist()
-tickers = Tickers
+def download_all_reports():
+    # Import tickers
+    TickerFile = pd.read_csv("companylist.csv")
+    tickers = TickerFile['Symbol'].tolist()
+    for ticker in tickers:
+        url_list= get_list(ticker)
+        base_path = "./Downloaded_Filings"
+        dir_path = base_path + "/"+ticker
+        download_report(url_list,dir_path)
 
-for ticker in tickers:
-    url_list= get_list(ticker)
-    base_path = "./Downloaded_Filings"
-    dir_path = base_path + "/"+ticker
-    download_report(url_list,dir_path)
+download_all_reports()
+
+
