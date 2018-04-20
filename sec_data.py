@@ -3,6 +3,7 @@ import os
 import urllib.request
 from bs4 import BeautifulSoup
 import pandas as pd
+import time
 
 def get_list(ticker):
     base_url_part1 = "http://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK="
@@ -56,6 +57,7 @@ def download_all_reports():
         dir_path = base_path + "/"+ticker
         download_report(url_list,dir_path)
 
-download_all_reports()
+if __name__ == '__main__':
+    download_all_reports()
 
 
