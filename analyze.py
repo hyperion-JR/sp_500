@@ -103,8 +103,9 @@ def export_to_excel(data, file_name):
     writer.save()
     print('Done')
 
-df = get_correlations()
-sorted_df = df.sort_values(by=['PCC', 'P-Value'])
-writer = pytablewriter.MarkdownTableWriter()
-writer.from_dataframe(sorted_df)
-writer.write_table()
+if __name__ == '__main__':
+    df = get_correlations()
+    sorted_df = df.sort_values(by=['PCC', 'P-Value'])
+    writer = pytablewriter.MarkdownTableWriter()
+    writer.from_dataframe(sorted_df)
+    writer.write_table()
