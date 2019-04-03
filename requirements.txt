@@ -1,8 +1,9 @@
 appnope==0.1.0
 beautifulsoup4==4.6.0
-bleach==2.1.2
+bleach==3.1.0
 certifi==2018.1.18
 chardet==3.0.4
+configparser==3.5.0
 cycler==0.10.0
 DataProperty==0.30.0
 decorator==4.2.1
@@ -32,7 +33,7 @@ mbstrdecoder==0.2.3
 mistune==0.8.3
 nbconvert==5.3.1
 nbformat==4.4.0
-notebook==5.4.1
+notebook==5.7.8
 numpy==1.14.0
 openpyxl==2.5.0
 pandas==0.22.0
@@ -41,6 +42,7 @@ parso==0.1.1
 pathvalidate==0.16.3
 pexpect==4.4.0
 pickleshare==0.7.4
+prometheus-client==0.6.0
 prompt-toolkit==1.0.15
 ptyprocess==0.5.2
 Pygments==2.2.0
@@ -50,7 +52,7 @@ python-dateutil==2.6.1
 pytz==2018.3
 pyzmq==17.0.0
 qtconsole==4.3.1
-requests==2.18.4
+requests==2.21.0
 scikit-learn==0.19.1
 scipy==1.0.0
 Send2Trash==1.5.0
@@ -65,7 +67,7 @@ toml==0.9.4
 tornado==4.5.3
 traitlets==4.3.2
 typepy==0.0.21
-urllib3==1.22
+urllib3==1.24.1
 wcwidth==0.1.7
 webencodings==0.5.1
 widgetsnbextension==3.1.4
