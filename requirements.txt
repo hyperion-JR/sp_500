@@ -32,7 +32,7 @@ matplotlib==3.0.3
 mbstrdecoder==0.8.1
 mistune==0.8.4
 msgfy==0.0.7
-nbconvert==5.5.0
+nbconvert==6.5.1
 nbformat==4.4.0
 notebook==5.7.8
 numpy==1.16.3
